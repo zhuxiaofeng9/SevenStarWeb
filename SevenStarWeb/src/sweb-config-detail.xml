@@ -1,0 +1,145 @@
+<sweb encode="utf-8" locale="zh_CN" resource="database">
+	<welcome-file>login.htm</welcome-file>
+	<parses>
+		<parse name="freemarker" class="org.sevenstar.web.url.FreemarkerParse" />
+	</parses>
+	<resources>
+		<resource name="property" class="org.sevenstar.web.resource.PropertyResource">
+			<param name="application" value="ApplicationResources" />
+			<param name="test" value="TestResources" />
+		</resource>
+		<resource name="database" class="org.sevenstar.app.resource.DatabaseResource">
+			<param name="test2" value="TestResources2" />
+		</resource>
+	</resources>
+	<finds>
+		<find name="page" class="org.sevenstar.web.find.PageFind">
+			<param name="package" value="org.sevenstar.app.page,test.page" />
+		</find>
+		<find name="action" class="org.sevenstar.web.find.ActionFind">
+			<param name="package" value="test" />
+		</find>
+		<find name="annotation" class="org.sevenstar.web.find.AnnotationFind">
+			<param name="package" value="org.sevenstar.app,test" />
+		</find>
+		<find name="undo" class="org.sevenstar.web.find.UnDoActionFind" />
+	</finds>
+	<invocations>
+		<invocation name="java"
+			class="org.sevenstar.web.action.java.DefaultJavaInvocation" />
+	</invocations>
+	<interceptors>
+		<interceptor name="cache"
+			class="org.sevenstar.web.interceptor.CacheInterceptor">
+			<param name="/user/List.html" value="10" />
+		</interceptor>
+		<interceptor name="parameter"
+			class="org.sevenstar.web.interceptor.ParameterInterceptor">
+			<param name="*" value="false" />
+			<param name="checkUrl" value="false" />
+		</interceptor>
+		<interceptor name="exception"
+			class="org.sevenstar.app.interceptor.ExceptionInterceptor" />
+		<interceptor name="upload"
+			class="org.sevenstar.web.interceptor.UploadInterceptor">
+			<param name="maxsize" value="10000000" />
+			<param name="allow" value="" />
+			<param name="deny" value="exe" />
+			<param name="path_logic" value="/appfile" />
+		</interceptor>
+
+	</interceptors>
+	<result-locations>
+		<location name="default"
+			class="org.sevenstar.web.location.DefaultResultLocation" />
+		<location name="ajax"
+			class="org.sevenstar.web.location.AjaxResultLocation" />
+	</result-locations>
+	<result-types>
+		<result-type name="freemarker"
+			class="org.sevenstar.web.view.freemarker.FreemarkerResult">
+			<param name="TemplateCache" value="10" />
+			<param name="close" value="false" />
+			<param name="errorLocation" value="error.ftl" />
+			<param name="404Location" value="error.ftl" />
+ 			<param name="DateHelper" value="org.sevenstar.util.DateHelper" />
+			<param name="ApplicationContext" value="org.sevenstar.app.context.ApplicationContext" />
+			<param name="ApplyService" value="org.sevenstar.app.workflow.service.ApplyService" />
+			<param name="ResourceName" value="resource" />
+			<param name="FCKeditorManager"
+				value="org.sevenstar.component.fckeditor.FCKeditorManager" />
+			<!-- <param name="cahceExclude" value="*login.htm*"/> -->
+		</result-type>
+		<result-type name="forward"
+			class="org.sevenstar.web.view.jsp.JspForwardResult" />
+		<result-type name="redirect"
+			class="org.sevenstar.web.view.jsp.JspRedirectResult" />
+		<result-type name="ajax" class="org.sevenstar.web.view.AjaxResult">
+			<param name="ContentType" value="text/json" />
+			<param name="json_encode" value="utf-8" />
+			<param name="response_encode" value="utf-8" />
+		</result-type>
+		<result-type name="file" class="org.sevenstar.web.view.FileResult">
+			<param name="encode" value="utf-8" />
+			<!-- <param name="mode" value="inline" /> -->
+		</result-type>
+		<result-type name="inputstream"
+			class="org.sevenstar.web.view.InputStreamResult" />
+	</result-types>
+	<global-results>
+		<result name="error" type="freemarker" location="/error.ftl" />
+		<result name="redirect" type="freemarker" location="/redirect.ftl" />
+	</global-results>
+	<action>
+		<url>
+			<rule pattern="*test.htm*" parse="" find="page" type="java"
+				encode="gbk" resultLocation="default" resultType="freemarker"
+				resource="" htmlcache=""
+				inteceptors="exception,upload,parameter">
+				<!-- nocache set: Pragma="no-cache" Cache-Control="no-cache" Expires="-1" -->
+				<header>
+					<param type="" name="Pragma" value="" />
+					<!-- value="max-age=43200" 12hours setHeader setIntHeader setDateHeader -->
+					<param type="int" name="Cache-Control" value="" />
+					<param type="date" name="Expires" value="" />
+				</header>
+			</rule>
+			<rule parse="" pattern="*.ajax*" find="annotation" type="java"
+				resultType="ajax" resultLocation="default" resource="" encode="gbk"
+				inteceptors="exception,upload,parameter">
+				<!-- <exclude pattern="*Test3*" /> -->
+			</rule>
+			<rule pattern="*.htm*" parse="" find="page" type="java"
+				resultLocation="default" resultType="freemarker" resource=""
+				inteceptors="exception,upload,parameter">
+			</rule>
+			<rule pattern="*.action*" parse="" find="annotation" type="java"
+				resultLocation="default" resultType="freemarker" resource=""
+				inteceptors="exception,upload,parameter">
+				<!-- <exclude pattern="*Test3*" /> -->
+			</rule>
+
+			<rule pattern="*.ftl*" find="page" type="java" resultType="freemarker"
+				resultLocation="default" parse="freemarker" resource=""
+				inteceptors="exception,upload,parameter">
+				<exclude pattern="*Test3*" />
+			</rule>
+
+			<rule pattern="*.do*" find="action" type="java" resultType="freemarker"
+				resultLocation="default" parse="" resource=""
+				inteceptors="exception,parameter">
+				<exclude pattern="*Test3*" />
+			</rule>
+			<rule pattern="*.jsp*" find="page" type="java" resultType="forward"
+				resultLocation="default" parse="" resource=""
+				inteceptors="exception,parameter">
+			</rule>
+			<rule pattern="*.css*" find="undo" type="java" resultType="freemarker"
+				resultLocation="default" parse="" resource="" inteceptors="exception,parameter">
+			</rule>
+			<rule pattern="*.js*" find="undo" type="java" resultType="freemarker"
+				resultLocation="default" parse="" resource="" inteceptors="exception,parameter">
+			</rule>
+		</url>
+	</action>
+</sweb>

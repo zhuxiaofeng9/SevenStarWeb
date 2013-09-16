@@ -1,0 +1,6 @@
+<sweb>
+	<config name="xmlconfig"
+		class="org.sevenstar.web.cfg.SwebXmlConfigure">
+		<param name="file" value="sweb-config-detail.xml" />
+	</config>
+</sweb>
